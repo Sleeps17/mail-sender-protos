@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package mail_sender;
+
+option go_package = "sleeps.mail_sender.v1;mail_senderv1";
+
+service MailSender {
+  rpc Send_Mail(stream SendRequest) returns (stream SendResponse);
+}
+
+message SendRequest {
+  string from = 1;
+  repeated string to = 2;
+  bytes msg = 3;
+}
+
+message SendResponse {
+  string status = 1;
+  string error = 2;
+}
