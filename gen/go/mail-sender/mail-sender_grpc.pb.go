@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MailSenderClient interface {
-	Send_Mail(ctx context.Context, opts ...grpc.CallOption) (MailSender_Send_MailClient, error)
+	Send(ctx context.Context, opts ...grpc.CallOption) (MailSender_SendClient, error)
 }
 
 type mailSenderClient struct {
@@ -33,30 +33,30 @@ func NewMailSenderClient(cc grpc.ClientConnInterface) MailSenderClient {
 	return &mailSenderClient{cc}
 }
 
-func (c *mailSenderClient) Send_Mail(ctx context.Context, opts ...grpc.CallOption) (MailSender_Send_MailClient, error) {
-	stream, err := c.cc.NewStream(ctx, &MailSender_ServiceDesc.Streams[0], "/mail_sender.MailSender/Send_Mail", opts...)
+func (c *mailSenderClient) Send(ctx context.Context, opts ...grpc.CallOption) (MailSender_SendClient, error) {
+	stream, err := c.cc.NewStream(ctx, &MailSender_ServiceDesc.Streams[0], "/mail_sender.MailSender/Send", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &mailSenderSend_MailClient{stream}
+	x := &mailSenderSendClient{stream}
 	return x, nil
 }
 
-type MailSender_Send_MailClient interface {
+type MailSender_SendClient interface {
 	Send(*SendRequest) error
 	Recv() (*SendResponse, error)
 	grpc.ClientStream
 }
 
-type mailSenderSend_MailClient struct {
+type mailSenderSendClient struct {
 	grpc.ClientStream
 }
 
-func (x *mailSenderSend_MailClient) Send(m *SendRequest) error {
+func (x *mailSenderSendClient) Send(m *SendRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *mailSenderSend_MailClient) Recv() (*SendResponse, error) {
+func (x *mailSenderSendClient) Recv() (*SendResponse, error) {
 	m := new(SendResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func (x *mailSenderSend_MailClient) Recv() (*SendResponse, error) {
 // All implementations must embed UnimplementedMailSenderServer
 // for forward compatibility
 type MailSenderServer interface {
-	Send_Mail(MailSender_Send_MailServer) error
+	Send(MailSender_SendServer) error
 	mustEmbedUnimplementedMailSenderServer()
 }
 
@@ -76,8 +76,8 @@ type MailSenderServer interface {
 type UnimplementedMailSenderServer struct {
 }
 
-func (UnimplementedMailSenderServer) Send_Mail(MailSender_Send_MailServer) error {
-	return status.Errorf(codes.Unimplemented, "method Send_Mail not implemented")
+func (UnimplementedMailSenderServer) Send(MailSender_SendServer) error {
+	return status.Errorf(codes.Unimplemented, "method Send not implemented")
 }
 func (UnimplementedMailSenderServer) mustEmbedUnimplementedMailSenderServer() {}
 
@@ -92,25 +92,25 @@ func RegisterMailSenderServer(s grpc.ServiceRegistrar, srv MailSenderServer) {
 	s.RegisterService(&MailSender_ServiceDesc, srv)
 }
 
-func _MailSender_Send_Mail_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MailSenderServer).Send_Mail(&mailSenderSend_MailServer{stream})
+func _MailSender_Send_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MailSenderServer).Send(&mailSenderSendServer{stream})
 }
 
-type MailSender_Send_MailServer interface {
+type MailSender_SendServer interface {
 	Send(*SendResponse) error
 	Recv() (*SendRequest, error)
 	grpc.ServerStream
 }
 
-type mailSenderSend_MailServer struct {
+type mailSenderSendServer struct {
 	grpc.ServerStream
 }
 
-func (x *mailSenderSend_MailServer) Send(m *SendResponse) error {
+func (x *mailSenderSendServer) Send(m *SendResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *mailSenderSend_MailServer) Recv() (*SendRequest, error) {
+func (x *mailSenderSendServer) Recv() (*SendRequest, error) {
 	m := new(SendRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -127,8 +127,8 @@ var MailSender_ServiceDesc = grpc.ServiceDesc{
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "Send_Mail",
-			Handler:       _MailSender_Send_Mail_Handler,
+			StreamName:    "Send",
+			Handler:       _MailSender_Send_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

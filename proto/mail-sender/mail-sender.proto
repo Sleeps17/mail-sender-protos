@@ -5,7 +5,7 @@ package mail_sender;
 option go_package = "sleeps.mail_sender.v1;mail_senderv1";
 
 service MailSender {
-  rpc Send_Mail(stream SendRequest) returns (stream SendResponse);
+  rpc Send(stream SendRequest) returns (stream SendResponse);
 }
 
 message SendRequest {
