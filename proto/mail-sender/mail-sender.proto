@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package mailer;
 
-option go_package = "sleeps.mailer.v1;mailer1";
+option go_package = "sleeps.mailer.v1;mailerv1";
 
 service Mailer {
   rpc Post(stream SendRequest) returns (stream SendResponse);
