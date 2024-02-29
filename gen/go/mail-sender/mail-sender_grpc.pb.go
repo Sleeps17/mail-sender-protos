@@ -4,7 +4,7 @@
 // - protoc             v3.18.0
 // source: mail-sender/mail-sender.proto
 
-package mail_senderv1
+package mailer1
 
 import (
 	context "context"
@@ -18,45 +18,45 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// MailSenderClient is the client API for MailSender service.
+// MailerClient is the client API for Mailer service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type MailSenderClient interface {
-	Send(ctx context.Context, opts ...grpc.CallOption) (MailSender_SendClient, error)
+type MailerClient interface {
+	Post(ctx context.Context, opts ...grpc.CallOption) (Mailer_PostClient, error)
 }
 
-type mailSenderClient struct {
+type mailerClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewMailSenderClient(cc grpc.ClientConnInterface) MailSenderClient {
-	return &mailSenderClient{cc}
+func NewMailerClient(cc grpc.ClientConnInterface) MailerClient {
+	return &mailerClient{cc}
 }
 
-func (c *mailSenderClient) Send(ctx context.Context, opts ...grpc.CallOption) (MailSender_SendClient, error) {
-	stream, err := c.cc.NewStream(ctx, &MailSender_ServiceDesc.Streams[0], "/mail_sender.MailSender/Send", opts...)
+func (c *mailerClient) Post(ctx context.Context, opts ...grpc.CallOption) (Mailer_PostClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Mailer_ServiceDesc.Streams[0], "/mailer.Mailer/Post", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &mailSenderSendClient{stream}
+	x := &mailerPostClient{stream}
 	return x, nil
 }
 
-type MailSender_SendClient interface {
+type Mailer_PostClient interface {
 	Send(*SendRequest) error
 	Recv() (*SendResponse, error)
 	grpc.ClientStream
 }
 
-type mailSenderSendClient struct {
+type mailerPostClient struct {
 	grpc.ClientStream
 }
 
-func (x *mailSenderSendClient) Send(m *SendRequest) error {
+func (x *mailerPostClient) Send(m *SendRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *mailSenderSendClient) Recv() (*SendResponse, error) {
+func (x *mailerPostClient) Recv() (*SendResponse, error) {
 	m := new(SendResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -64,53 +64,53 @@ func (x *mailSenderSendClient) Recv() (*SendResponse, error) {
 	return m, nil
 }
 
-// MailSenderServer is the server API for MailSender service.
-// All implementations must embed UnimplementedMailSenderServer
+// MailerServer is the server API for Mailer service.
+// All implementations must embed UnimplementedMailerServer
 // for forward compatibility
-type MailSenderServer interface {
-	Send(MailSender_SendServer) error
-	mustEmbedUnimplementedMailSenderServer()
+type MailerServer interface {
+	Post(Mailer_PostServer) error
+	mustEmbedUnimplementedMailerServer()
 }
 
-// UnimplementedMailSenderServer must be embedded to have forward compatible implementations.
-type UnimplementedMailSenderServer struct {
+// UnimplementedMailerServer must be embedded to have forward compatible implementations.
+type UnimplementedMailerServer struct {
 }
 
-func (UnimplementedMailSenderServer) Send(MailSender_SendServer) error {
-	return status.Errorf(codes.Unimplemented, "method Send not implemented")
+func (UnimplementedMailerServer) Post(Mailer_PostServer) error {
+	return status.Errorf(codes.Unimplemented, "method Post not implemented")
 }
-func (UnimplementedMailSenderServer) mustEmbedUnimplementedMailSenderServer() {}
+func (UnimplementedMailerServer) mustEmbedUnimplementedMailerServer() {}
 
-// UnsafeMailSenderServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to MailSenderServer will
+// UnsafeMailerServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to MailerServer will
 // result in compilation errors.
-type UnsafeMailSenderServer interface {
-	mustEmbedUnimplementedMailSenderServer()
+type UnsafeMailerServer interface {
+	mustEmbedUnimplementedMailerServer()
 }
 
-func RegisterMailSenderServer(s grpc.ServiceRegistrar, srv MailSenderServer) {
-	s.RegisterService(&MailSender_ServiceDesc, srv)
+func RegisterMailerServer(s grpc.ServiceRegistrar, srv MailerServer) {
+	s.RegisterService(&Mailer_ServiceDesc, srv)
 }
 
-func _MailSender_Send_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MailSenderServer).Send(&mailSenderSendServer{stream})
+func _Mailer_Post_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MailerServer).Post(&mailerPostServer{stream})
 }
 
-type MailSender_SendServer interface {
+type Mailer_PostServer interface {
 	Send(*SendResponse) error
 	Recv() (*SendRequest, error)
 	grpc.ServerStream
 }
 
-type mailSenderSendServer struct {
+type mailerPostServer struct {
 	grpc.ServerStream
 }
 
-func (x *mailSenderSendServer) Send(m *SendResponse) error {
+func (x *mailerPostServer) Send(m *SendResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *mailSenderSendServer) Recv() (*SendRequest, error) {
+func (x *mailerPostServer) Recv() (*SendRequest, error) {
 	m := new(SendRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -118,17 +118,17 @@ func (x *mailSenderSendServer) Recv() (*SendRequest, error) {
 	return m, nil
 }
 
-// MailSender_ServiceDesc is the grpc.ServiceDesc for MailSender service.
+// Mailer_ServiceDesc is the grpc.ServiceDesc for Mailer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var MailSender_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "mail_sender.MailSender",
-	HandlerType: (*MailSenderServer)(nil),
+var Mailer_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "mailer.Mailer",
+	HandlerType: (*MailerServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "Send",
-			Handler:       _MailSender_Send_Handler,
+			StreamName:    "Post",
+			Handler:       _Mailer_Post_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
